@@ -13,6 +13,10 @@ public interface UsuarioAPI {
 	@PostMapping
 	@ResponseStatus(code = HttpStatus.CREATED)
 	UsuarioCriadoResponse postNovoUsuario(@RequestBody @Valid UsuarioNovoRequest usuarioNovo);
+	
+	@PostMapping(value = "/foco/{idUsuario}")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    void mudaStatusParaFoco(@RequestHeader("Authorization") String token, @PathVariable UUID idUsuario);
 
 	@GetMapping(value = "/{idUsuario}")
 	@ResponseStatus(code = HttpStatus.OK)
