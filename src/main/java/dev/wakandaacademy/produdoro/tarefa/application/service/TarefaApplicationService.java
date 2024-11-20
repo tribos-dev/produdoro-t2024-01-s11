@@ -12,6 +12,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -39,5 +40,14 @@ public class TarefaApplicationService implements TarefaService {
         tarefa.pertenceAoUsuario(usuarioPorEmail);
         log.info("[finaliza] TarefaApplicationService - detalhaTarefa");
         return tarefa;
+    }
+
+    @Override
+    public void concluiTarefa(String usuarioEmail, UUID idTarefa) {
+        log.info("[inicia] TarefaApplicationService - concluiTarefa");
+        Tarefa tarefa = detalhaTarefa(usuarioEmail, idTarefa);
+        tarefa.concluiTarefa();
+        tarefaRepository.salva(tarefa);
+        log.info("[finaliza] TarefaApplicationService - concluiTarefa");
     }
 }
