@@ -51,6 +51,6 @@ public class TarefaApplicationService implements TarefaService {
         usuarioPorEmail.validaUsuario(idUsuario);
         List<Tarefa> tarefas = tarefaRepository.buscaTarefaPorIdUsuario(idUsuario);
         log.info("[finaliza] TarefaRestController - buscarTodasAsTarefas");
-        return List.of();
+        return TarefaListResponse.converter(tarefas);
     }
 }
