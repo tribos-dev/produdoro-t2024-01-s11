@@ -45,7 +45,7 @@ public class Tarefa {
 		this.descricao = tarefaRequest.getDescricao();
 		this.idArea = tarefaRequest.getIdArea();
 		this.idProjeto = tarefaRequest.getIdProjeto();
-		this.status = StatusTarefa.A_FAZER;
+		this.status = StatusTarefa.CONCLUIDA;
 		this.statusAtivacao = StatusAtivacaoTarefa.INATIVA;
 		this.contagemPomodoro = 1;
 	}
