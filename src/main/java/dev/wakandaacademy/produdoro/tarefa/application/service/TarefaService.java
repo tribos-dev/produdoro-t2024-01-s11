@@ -12,4 +12,5 @@ public interface TarefaService {
     Tarefa detalhaTarefa(String usuario, UUID idTarefa);
 
     List<TarefaListResponse> buscarTodasAsTarefas(String usuario, UUID idUsuario);
+
 }
