@@ -19,14 +19,14 @@ import java.util.UUID;
 @Log4j2
 @RequiredArgsConstructor
 public class UsuarioController implements UsuarioAPI {
-	private final UsuarioService usuarioAplicationService;
+	private final UsuarioService usuarioApplicationService;
 	
 	private final TokenService tokenService;
 
 	@Override
 	public UsuarioCriadoResponse postNovoUsuario(@Valid UsuarioNovoRequest usuarioNovo) {
 		log.info("[inicia] UsuarioController - postNovoUsuario");
-		UsuarioCriadoResponse usuarioCriado = usuarioAplicationService.criaNovoUsuario(usuarioNovo);
+		UsuarioCriadoResponse usuarioCriado = usuarioApplicationService.criaNovoUsuario(usuarioNovo);
 		log.info("[finaliza] UsuarioController - postNovoUsuario");
 		return usuarioCriado;
 	}
@@ -34,7 +34,7 @@ public class UsuarioController implements UsuarioAPI {
 	public UsuarioCriadoResponse buscaUsuarioPorId(UUID idUsuario) {
 		log.info("[inicia] UsuarioController - buscaUsuarioPorId");
 		log.info("[idUsuario] {}", idUsuario);
-		UsuarioCriadoResponse buscaUsuario = usuarioAplicationService.buscaUsuarioPorId(idUsuario);
+		UsuarioCriadoResponse buscaUsuario = usuarioApplicationService.buscaUsuarioPorId(idUsuario);
 		log.info("[finaliza] UsuarioController - buscaUsuarioPorId");
 		return buscaUsuario;
 	}
@@ -43,7 +43,7 @@ public class UsuarioController implements UsuarioAPI {
 	public void mudaStatusParaFoco(String token, UUID idUsuario) {
 		log.info("[inicia] UsuarioController - mudaStatusParaFoco");
 		String emailUsuario = getUsuarioToken(token);
-		usuarioAplicationService.mudaStatusParaFoco(emailUsuario, idUsuario);
+		usuarioApplicationService.mudaStatusParaFoco(emailUsuario, idUsuario);
 		log.info("[finaliza] UsuarioController - mudaStatusParaFoco");
 		
 	}

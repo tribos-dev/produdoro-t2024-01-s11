@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import dev.wakandaacademy.produdoro.handler.APIException;
 import dev.wakandaacademy.produdoro.tarefa.application.api.TarefaRequest;
+import dev.wakandaacademy.produdoro.usuario.domain.StatusUsuario;
 import dev.wakandaacademy.produdoro.usuario.domain.Usuario;
 
 import org.springframework.data.annotation.Id;
@@ -55,4 +56,27 @@ public class Tarefa {
 			throw APIException.build(HttpStatus.UNAUTHORIZED, "Usuário não é dono da Tarefa solicitada!");
 		}
 	}
+
+	public void incrementaPomodoro(Tarefa tarefa, Usuario usuario) {
+		pertenceAoUsuario(usuario);
+		if(usuario.getStatus().equals(StatusUsuario.FOCO)) {
+			tarefa.incrementaPomodoro();
+			//verificaQuantidadePomodoro(tarefa, usuario);
+		}
+		
+	}
+	
+	private int incrementaPomodoro() {
+		return ++contagemPomodoro;
+	}
+	
+	/*private void verificaQuantidadePomodoro(Tarefa tarefa, Usuario usuario) {
+		int totalPomodoro = tarefa.getContagemPomodoro();
+		if(totalPomodoro % 4 == 0){
+		ColocarmetodoPausaLonga;
+		} else {
+		colocarmetodoPausaCurta;
+		}
+		
+	}*/
 }

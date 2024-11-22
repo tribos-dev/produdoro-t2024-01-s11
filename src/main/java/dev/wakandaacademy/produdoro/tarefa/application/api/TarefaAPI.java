@@ -20,6 +20,10 @@ public interface TarefaAPI {
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
     TarefaIdResponse postNovaTarefa(@RequestBody @Valid TarefaRequest tarefaRequest);
+    
+    @PostMapping("/incrementaPomodoro/{idTarefa}")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    void incrementaPomodoro(@RequestHeader("Authorization") String token, @PathVariable UUID idTarefa);
 
     @GetMapping("/{idTarefa}")
     @ResponseStatus(code = HttpStatus.OK)
