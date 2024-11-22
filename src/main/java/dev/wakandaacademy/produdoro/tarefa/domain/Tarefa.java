@@ -69,14 +69,5 @@ public class Tarefa {
 	private int incrementaPomodoro() {
 		return ++contagemPomodoro;
 	}
-	
-	/*private void verificaQuantidadePomodoro(Tarefa tarefa, Usuario usuario) {
-		int totalPomodoro = tarefa.getContagemPomodoro();
-		if(totalPomodoro % 4 == 0){
-		ColocarmetodoPausaLonga;
-		} else {
-		colocarmetodoPausaCurta;
-		}
-		
-	}*/
+
 }
