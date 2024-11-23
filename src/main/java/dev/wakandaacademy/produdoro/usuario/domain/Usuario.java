@@ -52,11 +52,25 @@ public class Usuario {
 
 	public void mudaStatusParaPausaCurta() {
 		this.status = StatusUsuario.PAUSA_CURTA;
-		
+
 	}
 
-	
+	public void mudaStatusParaPausaCurta(UUID idUsuario) {
+		pertenceAoUsuario(idUsuario);
+		verificaSeJaEstaEmPausaCurta();
+		mudaStatusParaPausaCurta();
 	}
 
-	
+	public void verificaSeJaEstaEmPausaCurta() {
+		if (this.status.equals(StatusUsuario.PAUSA_CURTA)) {
+			throw APIException.build(HttpStatus.BAD_REQUEST, "Usuário já está em Pausa Curta.");
+		}
+	}
 
+	private void pertenceAoUsuario(UUID idUsuario) {
+		if (!this.idUsuario.equals(idUsuario)) {
+			throw APIException.build(HttpStatus.UNAUTHORIZED, "Credencial de autenticação não é válida.");
+		}
+	}
+
+}
