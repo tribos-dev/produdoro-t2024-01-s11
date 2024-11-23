@@ -49,10 +49,23 @@ public class Tarefa {
 		this.statusAtivacao = StatusAtivacaoTarefa.INATIVA;
 		this.contagemPomodoro = 1;
 	}
-
 	public void pertenceAoUsuario(Usuario usuarioPorEmail) {
 		if(!this.idUsuario.equals(usuarioPorEmail.getIdUsuario())) {
 			throw APIException.build(HttpStatus.UNAUTHORIZED, "Usuário não é dono da Tarefa solicitada!");
 		}
+	}
+	public void validaToken(Usuario usuario) {
+		if(this.idUsuario.equals(usuario.getIdUsuario())){
+			throw APIException.build(HttpStatus.UNAUTHORIZED, "Token não corresponde ao dono da tarefa!");
+		}
+	}
+	public void verificaSeEstaAtiva() {
+		if(this.statusAtivacao.equals(StatusAtivacaoTarefa.ATIVA)){
+			throw APIException.build(HttpStatus.CONFLICT, "Tarefa já está ativa!");
+		}
+	}
+
+	public void ativaTarefa() {
+		this.statusAtivacao = StatusAtivacaoTarefa.ATIVA;
 	}
 }
