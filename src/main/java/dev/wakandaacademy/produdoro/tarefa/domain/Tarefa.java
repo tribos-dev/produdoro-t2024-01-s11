@@ -55,7 +55,7 @@ public class Tarefa {
 		}
 	}
 	public void validaToken(Usuario usuario) {
-		if(this.idUsuario.equals(usuario.getIdUsuario())){
+		if(!this.idUsuario.equals(usuario.getIdUsuario())){
 			throw APIException.build(HttpStatus.UNAUTHORIZED, "Token não corresponde ao dono da tarefa!");
 		}
 	}
