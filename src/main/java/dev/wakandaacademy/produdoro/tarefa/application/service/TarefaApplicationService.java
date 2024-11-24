@@ -1,6 +1,7 @@
 package dev.wakandaacademy.produdoro.tarefa.application.service;
 
 import dev.wakandaacademy.produdoro.handler.APIException;
+import dev.wakandaacademy.produdoro.tarefa.application.api.NovaPosicaoRequest;
 import dev.wakandaacademy.produdoro.tarefa.application.api.TarefaIdResponse;
 import dev.wakandaacademy.produdoro.tarefa.application.api.TarefaListResponse;
 import dev.wakandaacademy.produdoro.tarefa.application.api.TarefaRequest;
@@ -27,7 +28,8 @@ public class TarefaApplicationService implements TarefaService {
     @Override
     public TarefaIdResponse criaNovaTarefa(TarefaRequest tarefaRequest) {
         log.info("[inicia] TarefaApplicationService - criaNovaTarefa");
-        Tarefa tarefaCriada = tarefaRepository.salva(new Tarefa(tarefaRequest));
+        Integer novaPosicao = tarefaRepository.contagemPosicao(tarefaRequest.getIdUsuario());
+        Tarefa tarefaCriada = tarefaRepository.salva(new Tarefa(tarefaRequest, novaPosicao));
         log.info("[finaliza] TarefaApplicationService - criaNovaTarefa");
         return TarefaIdResponse.builder().idTarefa(tarefaCriada.getIdTarefa()).build();
     }
@@ -52,5 +54,14 @@ public class TarefaApplicationService implements TarefaService {
         List<Tarefa> tarefas = tarefaRepository.buscaTarefaPorIdUsuario(idUsuario);
         log.info("[finaliza] TarefaRestController - buscarTodasAsTarefas");
         return TarefaListResponse.converter(tarefas);
+    }
+
+    @Override
+    public void alteraPosicaoTarefa(String usuario, UUID idTarefa, NovaPosicaoRequest novaPosicao) {
+        log.info("[inicia] TarefaRestController - alteraPosicaoTarefa");
+        Tarefa tarefa = detalhaTarefa(usuario, idTarefa);
+        List<Tarefa> todasTarefas = tarefaRepository.buscaTarefaPorIdUsuario(tarefa.getIdUsuario());
+        tarefaRepository.defineNovaPosicaoTarefa(tarefa, todasTarefas, novaPosicao);
+        log.info("[finaliza] TarefaRestController - alteraPosicaoTarefa");
     }
 }
