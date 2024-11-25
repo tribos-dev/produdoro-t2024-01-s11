@@ -44,6 +44,14 @@ public class TarefaApplicationService implements TarefaService {
     }
 
     @Override
+    public void concluiTarefa(String usuarioEmail, UUID idTarefa) {
+        log.info("[inicia] TarefaApplicationService - concluiTarefa");
+        Tarefa tarefa = detalhaTarefa(usuarioEmail, idTarefa);
+        tarefa.concluiTarefa();
+        tarefaRepository.salva(tarefa);
+        log.info("[finaliza] TarefaApplicationService - concluiTarefa");
+    }
+
     public List<TarefaListResponse> buscarTodasAsTarefas(String usuario, UUID idUsuario) {
         log.info("[inicia] TarefaRestController - buscarTodasAsTarefas");
         Usuario usuarioPorEmail = usuarioRepository.buscaUsuarioPorEmail(usuario);
