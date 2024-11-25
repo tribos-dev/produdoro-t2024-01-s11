@@ -64,6 +64,7 @@ class TarefaApplicationServiceTest {
         assertEquals(tarefa.getStatus(), StatusTarefa.CONCLUIDA);
     }
 
+    @Test
     void deveListarTarefasdoUsuario(){
         Usuario usuario = DataHelper.createUsuario();
         List<Tarefa> listaTarefas = DataHelper.createListTarefa();
