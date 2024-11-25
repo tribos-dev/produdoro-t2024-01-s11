@@ -53,4 +53,19 @@ public class TarefaApplicationService implements TarefaService {
         log.info("[finaliza] TarefaRestController - buscarTodasAsTarefas");
         return TarefaListResponse.converter(tarefas);
     }
+
+    @Override
+    public void deletarTodasAsTarefas(String usuario, UUID idUsuario) {
+        log.info("[inicia] TarefaApplicationService - deletarTodasAsTarefas");
+        validacaoDeUsuario(usuario, idUsuario);
+        List<Tarefa> tarefas = tarefaRepository.buscaTarefaPorIdUsuario(idUsuario);
+        tarefaRepository.deletaTodasAsTarefas(tarefas);
+        log.info("[finaliza] TarefaApplicationService - deletarTodasAsTarefas");
+    }
+
+    private void validacaoDeUsuario(String email, UUID idUsuario) {
+        Usuario usuario = usuarioRepository.buscaUsuarioPorEmail(email);
+        usuarioRepository.buscaUsuarioPorId(idUsuario);
+        usuario.validacaoUsuario(idUsuario);
+    }
 }

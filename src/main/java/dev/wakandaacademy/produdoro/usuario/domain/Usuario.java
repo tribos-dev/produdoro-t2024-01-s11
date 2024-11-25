@@ -1,5 +1,6 @@
 package dev.wakandaacademy.produdoro.usuario.domain;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.validation.constraints.Email;
@@ -26,27 +27,35 @@ import org.springframework.http.HttpStatus;
 @ToString
 @Document(collection = "Usuario")
 public class Usuario {
-	@Id
-	private UUID idUsuario;
-	@Email
-	@Indexed(unique = true)
-	private String email;
-	private ConfiguracaoUsuario configuracao;
-	@Builder.Default
-	private StatusUsuario status = StatusUsuario.FOCO;
-	@Builder.Default
-	private Integer quantidadePomodorosPausaCurta = 0;
-	
-	public Usuario(UsuarioNovoRequest usuarioNovo, ConfiguracaoPadrao configuracaoPadrao) {
-		this.idUsuario = UUID.randomUUID();
-		this.email = usuarioNovo.getEmail();
-		this.status = StatusUsuario.FOCO;
-		this.configuracao = new ConfiguracaoUsuario(configuracaoPadrao);
-	}
+    @Id
+    private UUID idUsuario;
+    @Email
+    @Indexed(unique = true)
+    private String email;
+    private ConfiguracaoUsuario configuracao;
+    @Builder.Default
+    private StatusUsuario status = StatusUsuario.FOCO;
+    @Builder.Default
+    private Integer quantidadePomodorosPausaCurta = 0;
 
-	public void validaUsuario(UUID idUsuario) {
-		if (!this.idUsuario.equals(idUsuario)) {
-			throw APIException.build(HttpStatus.UNAUTHORIZED,"Credencial de autenticação não é válida");
-		}
-	}
+    public Usuario(UsuarioNovoRequest usuarioNovo, ConfiguracaoPadrao configuracaoPadrao) {
+        this.idUsuario = UUID.randomUUID();
+        this.email = usuarioNovo.getEmail();
+        this.status = StatusUsuario.FOCO;
+        this.configuracao = new ConfiguracaoUsuario(configuracaoPadrao);
+    }
+
+    public void validaUsuario(UUID idUsuario) {
+        if (!this.idUsuario.equals(idUsuario)) {
+            throw APIException.build(HttpStatus.UNAUTHORIZED, "Credencial de autenticação não é válida");
+        }
+    }
+
+    public void validacaoUsuario(UUID idUsuario) {
+        Optional.of(this.idUsuario)
+                .filter(id -> id.equals(idUsuario))
+                .orElseThrow(() -> APIException
+                        .build(HttpStatus.UNAUTHORIZED, "Usuário(a) não autorizado(a) para a requisição solicitada!"));
+
+    }
 }
