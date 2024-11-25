@@ -3,7 +3,7 @@ package dev.wakandaacademy.produdoro.tarefa.application.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +64,7 @@ class TarefaApplicationServiceTest {
         assertEquals(tarefa.getStatus(), StatusTarefa.CONCLUIDA);
     }
 
+    @Test
     void deveListarTarefasdoUsuario(){
         Usuario usuario = DataHelper.createUsuario();
         List<Tarefa> listaTarefas = DataHelper.createListTarefa();
@@ -78,7 +79,18 @@ class TarefaApplicationServiceTest {
         assertEquals(8, response.size());
     }
 
-
+    @Test
+    void deletaTarefasConcluidasSucesso() {
+        Usuario usuario = DataHelper.createUsuario();
+        List<Tarefa> listaTarefas = DataHelper.createListTarefa();
+        String email = usuario.getEmail();
+        UUID idUsuario = usuario.getIdUsuario();
+        when(usuarioRepository.buscaUsuarioPorEmail(any())).thenReturn(usuario);
+        when(usuarioRepository.buscaUsuarioPorId(any())).thenReturn(usuario);
+        when(tarefaRepository.buscaTarefasConcluidas(any())).thenReturn(listaTarefas);
+        tarefaApplicationService.deletaTarefasConcluidas(email, idUsuario);
+        verify(tarefaRepository, times(1)).deletaTarefasConcluidas(listaTarefas);
+    }
 
     public TarefaRequest getTarefaRequest() {
         TarefaRequest request = new TarefaRequest("tarefa 1", UUID.randomUUID(), null, null, 0);
