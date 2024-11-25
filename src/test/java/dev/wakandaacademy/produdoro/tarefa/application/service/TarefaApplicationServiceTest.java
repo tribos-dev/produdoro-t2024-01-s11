@@ -1,7 +1,6 @@
 package dev.wakandaacademy.produdoro.tarefa.application.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -13,6 +12,7 @@ import java.util.UUID;
 
 import dev.wakandaacademy.produdoro.DataHelper;
 import dev.wakandaacademy.produdoro.tarefa.domain.StatusTarefa;
+import dev.wakandaacademy.produdoro.tarefa.application.api.TarefaListResponse;
 import dev.wakandaacademy.produdoro.usuario.application.repository.UsuarioRepository;
 import dev.wakandaacademy.produdoro.usuario.domain.Usuario;
 import org.junit.jupiter.api.Test;
@@ -63,6 +63,22 @@ class TarefaApplicationServiceTest {
         tarefaApplicationService.concluiTarefa(usuario.getEmail(), tarefa.getIdTarefa());
         assertEquals(tarefa.getStatus(), StatusTarefa.CONCLUIDA);
     }
+
+    void deveListarTarefasdoUsuario(){
+        Usuario usuario = DataHelper.createUsuario();
+        List<Tarefa> listaTarefas = DataHelper.createListTarefa();
+        when(usuarioRepository.buscaUsuarioPorId(any())).thenReturn(usuario);
+        when(usuarioRepository.buscaUsuarioPorEmail(any())).thenReturn(usuario);
+        when(tarefaRepository.buscaTarefaPorIdUsuario(any())).thenReturn(listaTarefas);
+        String usuarioEmail = "email@email.com";
+        UUID idUsuario = UUID.fromString("a713162f-20a9-4db9-a85b-90cd51ab18f4");
+        List<TarefaListResponse> response = tarefaApplicationService.buscarTodasAsTarefas(usuarioEmail, idUsuario);
+        assertNotNull(response);
+        assertEquals(ArrayList.class,response.getClass());
+        assertEquals(8, response.size());
+    }
+
+
 
     public TarefaRequest getTarefaRequest() {
         TarefaRequest request = new TarefaRequest("tarefa 1", UUID.randomUUID(), null, null, 0);
