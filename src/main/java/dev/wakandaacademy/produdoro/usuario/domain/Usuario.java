@@ -51,7 +51,7 @@ public class Usuario {
         }
     }
 
-    public void validacaoUsuario(UUID idUsuario) {
+    public void validacaoUsuario(Usuario usuarioPorEmail) {
         Optional.of(this.idUsuario)
                 .filter(id -> id.equals(idUsuario))
                 .orElseThrow(() -> APIException

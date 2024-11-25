@@ -13,4 +13,6 @@ public interface TarefaRepository {
 
     List<Tarefa> buscaTarefaPorIdUsuario(UUID idUsuario);
 
+    void deletaTodasAsTarefas(List<Tarefa> tarefas);
+
 }
