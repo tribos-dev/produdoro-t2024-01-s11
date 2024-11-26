@@ -38,6 +38,7 @@ public class TarefaInfraRepository implements TarefaRepository {
         log.info("[finaliza] TarefaInfraRepository - salva");
         return tarefa;
     }
+
     @Override
     public Optional<Tarefa> buscaTarefaPorId(UUID idTarefa) {
         log.info("[inicia] TarefaInfraRepository - buscaTarefaPorId");
@@ -49,70 +50,47 @@ public class TarefaInfraRepository implements TarefaRepository {
     @Override
     public List<Tarefa> buscaTarefaPorIdUsuario(UUID idUsuario) {
         log.info("[inicia] TarefaRestController - buscaTarefaPorIdUsuario");
-        List<Tarefa> todasAsTarefas = tarefaSpringMongoDBRepository.findAllByIdUsuario(idUsuario);
+        List<Tarefa> todasAsTarefas = tarefaSpringMongoDBRepository.findAllByIdUsuarioOrderByPosicaoAsc(idUsuario);
         log.info("[finaliza] TarefaRestController - buscaTarefaPorIdUsuario");
         return todasAsTarefas;
     }
 
     @Override
-    public Integer contagemPosicao(UUID idUsuario) {
-        return tarefaSpringMongoDBRepository.countByIdUsuario(idUsuario);
+    public Integer contagemPosicao(UUID idUsuario) {return tarefaSpringMongoDBRepository.countByIdUsuario(idUsuario);
     }
 
     @Override
-    public void defineNovaPosicaoTarefa(Tarefa tarefa, List<Tarefa> todasTarefas, NovaPosicaoRequest novaPosicao) {
+    public void defineNovaPosicaoTarefa(Tarefa tarefa, List<Tarefa> tarefas, NovaPosicaoRequest novaPosicao) {
         log.info("[inicia] TarefaRestController - defineNovaPosicaoTarefa");
-        validaNovaPosicao(tarefa, todasTarefas, novaPosicao);
-        int posicaoAtualTarefa = tarefa.getPosicaoTarefa();
+        validaNovaPosicao(tarefa, tarefas, novaPosicao);
+        int posicaoAtualTarefa = tarefa.getPosicao();
         int novaPosicaoTarefa = novaPosicao.getNovaPosicao();
-        if (novaPosicaoTarefa < posicaoAtualTarefa){
-            for (int i = novaPosicaoTarefa; i < posicaoAtualTarefa; i++){
-                Tarefa tarefaDeslocada = todasTarefas.get(i);
-                atualizaPosicaoTarefa(tarefaDeslocada, i + 1);
-            }
-//            IntStream.range(novaPosicaoTarefa, posicaoAtualTarefa)
-//                    .forEach(i -> atualizaPosicaoTarefa(todasTarefas.get(i), i++));
+        if (novaPosicaoTarefa < posicaoAtualTarefa) {
+            IntStream.range(novaPosicaoTarefa, posicaoAtualTarefa)
+                    .forEach(i -> atualizaPosicaoTarefa(tarefas.get(i), i+1));
         } else if (novaPosicaoTarefa > posicaoAtualTarefa) {
-            for (int i = posicaoAtualTarefa + 1; i <= novaPosicaoTarefa; i++){
-                Tarefa tarefaDeslocada = todasTarefas.get(i);
-                atualizaPosicaoTarefa(tarefaDeslocada, i -1);
-            }
-//            IntStream.range(posicaoAtualTarefa + 1, novaPosicaoTarefa + 1)
-//                    .forEach(i -> atualizaPosicaoTarefa(todasTarefas.get(i), i--));
+            IntStream.range(posicaoAtualTarefa + 1, novaPosicaoTarefa + 1)
+                    .forEach(i -> atualizaPosicaoTarefa(tarefas.get(i), i-1));
         }
-        tarefa.alteraPosicaoTarefa(novaPosicaoTarefa);
+        tarefa.alteraPosicao(novaPosicaoTarefa);
         atualizaPosicaoTarefa(tarefa, novaPosicaoTarefa);
         log.info("[finaliza] TarefaRestController - defineNovaPosicaoTarefa");
     }
 
-    private void atualizaPosicaoTarefa(Tarefa tarefa, int i) {
+    private void atualizaPosicaoTarefa(Tarefa tarefa, int novaPosicao) {
         Query query = new Query(Criteria.where("idTarefa").is(tarefa.getIdTarefa()));
-        Update update = new Update().set("posicao", i);
+        Update update = new Update().set("posicao", novaPosicao);
         mongoTemplate.updateFirst(query, update, Tarefa.class);
     }
 
     private void validaNovaPosicao(Tarefa tarefa, List<Tarefa> todasTarefas, NovaPosicaoRequest novaPosicao) {
-            int posicaoAntiga = tarefa.getPosicaoTarefa();
-            int tamanhoListaTarefa = todasTarefas.size();
-//            if (novaPosicao.getNovaPosicao() >= tamanhoListaTarefa || novaPosicao.getNovaPosicao() <= posicaoAntiga){
-//                String mensagem = novaPosicao.getNovaPosicao() >= tamanhoListaTarefa
-//                        ? "A posição da tarefa não pode ser maior ou igual à quantidade total de tarefas do usuário."
-//                        : "A posição da tarefa é igual a posição atual da tarefa, insira nova posição";
-//            }
-            if (novaPosicao.getNovaPosicao() >= tamanhoListaTarefa) {
-                throw APIException.build(
-                        HttpStatus.NOT_FOUND,
-                        "A posição da tarefa não pode ser maior ou igual à quantidade total de tarefas do usuário."
-                );
-            }
-        if (novaPosicao.getNovaPosicao() < 0) {
-            throw APIException.build(
-                    HttpStatus.NOT_FOUND,
-                    "A posição da tarefa deve ser maior ou igual a zero."
-            );
+        int posicaoAntiga = tarefa.getPosicao();
+        int tamanhoListaTarefa = todasTarefas.size();
+        if (novaPosicao.getNovaPosicao() >= tamanhoListaTarefa || novaPosicao.getNovaPosicao().equals(posicaoAntiga)) {
+            String mensagem = novaPosicao.getNovaPosicao() >= tamanhoListaTarefa
+                    ? "A posição da tarefa não pode ser maior ou igual à quantidade total de tarefas do usuário."
+                    : "A posição da tarefa é igual a posição atual da tarefa, insira nova posição";
+            throw APIException.build(HttpStatus.BAD_REQUEST, mensagem);
         }
-            if (novaPosicao.getNovaPosicao() <= posicaoAntiga) {
-                log.info("A nova posição é igual à posição atual. Nenhuma alteração necessária.");
-            }
     }
 }

@@ -25,7 +25,7 @@ public interface    TarefaAPI {
     List<TarefaListResponse> listarTodasAsTarefas(@RequestHeader(name = "Authorization",required = true) String token,
                                                   @PathVariable UUID idUsuario);
 
-    @PatchMapping("/{idTarefa}/{novaPosicao}")
+    @PatchMapping("/mudarOrdem/{idTarefa}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
     void alteraPosicaoTarefa(@RequestHeader(name = "Authorization", required = true) String token,
                              @PathVariable UUID idTarefa, @Valid @RequestBody NovaPosicaoRequest novaPosicao);

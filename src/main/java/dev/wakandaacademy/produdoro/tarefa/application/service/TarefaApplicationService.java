@@ -60,8 +60,8 @@ public class TarefaApplicationService implements TarefaService {
     public void alteraPosicaoTarefa(String usuario, UUID idTarefa, NovaPosicaoRequest novaPosicao) {
         log.info("[inicia] TarefaRestController - alteraPosicaoTarefa");
         Tarefa tarefa = detalhaTarefa(usuario, idTarefa);
-        List<Tarefa> todasTarefas = tarefaRepository.buscaTarefaPorIdUsuario(tarefa.getIdUsuario());
-        tarefaRepository.defineNovaPosicaoTarefa(tarefa, todasTarefas, novaPosicao);
+        List<Tarefa> tarefas = tarefaRepository.buscaTarefaPorIdUsuario(tarefa.getIdUsuario());
+        tarefaRepository.defineNovaPosicaoTarefa(tarefa, tarefas, novaPosicao);
         log.info("[finaliza] TarefaRestController - alteraPosicaoTarefa");
     }
 }

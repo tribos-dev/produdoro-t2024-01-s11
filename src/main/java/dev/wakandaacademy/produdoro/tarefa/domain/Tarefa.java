@@ -38,7 +38,7 @@ public class Tarefa {
 	private StatusTarefa status;
 	private StatusAtivacaoTarefa statusAtivacao;
 	private int contagemPomodoro;
-	private int posicaoTarefa;
+	private Integer posicao;
 
 	public Tarefa(TarefaRequest tarefaRequest, Integer novaPosicao) {
 		this.idTarefa = UUID.randomUUID();
@@ -49,7 +49,7 @@ public class Tarefa {
 		this.status = StatusTarefa.A_FAZER;
 		this.statusAtivacao = StatusAtivacaoTarefa.INATIVA;
 		this.contagemPomodoro = 1;
-		this.posicaoTarefa = novaPosicao;
+		this.posicao = novaPosicao;
 	}
 
 	public void pertenceAoUsuario(Usuario usuarioPorEmail) {
@@ -58,7 +58,9 @@ public class Tarefa {
 		}
 	}
 
-    public void alteraPosicaoTarefa(int novaPosicaoTarefa) {
-		this.posicaoTarefa = novaPosicaoTarefa;
+    public void alteraPosicao(int novaPosicao) {
+		this.posicao = novaPosicao;
     }
+
+
 }
