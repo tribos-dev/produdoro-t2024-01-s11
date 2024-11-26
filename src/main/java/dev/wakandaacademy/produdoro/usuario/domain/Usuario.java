@@ -36,14 +36,14 @@ public class Usuario {
 	private StatusUsuario status = StatusUsuario.FOCO;
 	@Builder.Default
 	private Integer quantidadePomodorosPausaCurta = 0;
-	
+
 	public Usuario(UsuarioNovoRequest usuarioNovo, ConfiguracaoPadrao configuracaoPadrao) {
 		this.idUsuario = UUID.randomUUID();
 		this.email = usuarioNovo.getEmail();
 		this.status = StatusUsuario.FOCO;
 		this.configuracao = new ConfiguracaoUsuario(configuracaoPadrao);
 	}
-
+	
 	public void mudaParaFoco(UUID idUsuario) {
 		validaUsuario(idUsuario);
 		verificaStatusFoco();
@@ -57,11 +57,32 @@ public class Usuario {
 		}
 		
 	}
-
-	private void validaUsuario(UUID idUsuario) {
-		if(!this.idUsuario.equals(idUsuario)) {
+	public void validaUsuario(UUID idUsuario) {
+		if (!this.idUsuario.equals(idUsuario)) {
 			throw APIException.build(HttpStatus.UNAUTHORIZED, "Credencial de autenticação não é válida");
 		}
-		
+	}
+
+	public void mudaStatusParaPausaCurta() {
+		this.status = StatusUsuario.PAUSA_CURTA;
+
+	}
+
+	public void mudaStatusParaPausaCurta(UUID idUsuario) {
+		pertenceAoUsuario(idUsuario);
+		verificaSeJaEstaEmPausaCurta();
+		mudaStatusParaPausaCurta();
+	}
+
+	public void verificaSeJaEstaEmPausaCurta() {
+		if (this.status.equals(StatusUsuario.PAUSA_CURTA)) {
+			throw APIException.build(HttpStatus.BAD_REQUEST, "Usuário já está em Pausa Curta.");
+		}
+	}
+
+	private void pertenceAoUsuario(UUID idUsuario) {
+		if (!this.idUsuario.equals(idUsuario)) {
+			throw APIException.build(HttpStatus.UNAUTHORIZED, "Credencial de autenticação não é válida.");
+		}
 	}
 }

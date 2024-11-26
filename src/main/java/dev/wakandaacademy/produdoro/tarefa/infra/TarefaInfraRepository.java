@@ -14,6 +14,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -45,6 +46,7 @@ public class TarefaInfraRepository implements TarefaRepository {
     }
 
     @Override
+
     public void inativaTarefa(UUID idUsuario) {
         log.info("[inicia] TarefaInfraRepository - inativaTarefa");
         Query query = new Query(Criteria.where("idUsuario").is(idUsuario)
@@ -54,5 +56,10 @@ public class TarefaInfraRepository implements TarefaRepository {
         log.info("[finaliza] TarefaInfraRepository - inativaTarefa");
     }
 
-
+    public List<Tarefa> buscaTarefaPorIdUsuario(UUID idUsuario) {
+        log.info("[inicia] TarefaRestController - buscaTarefaPorIdUsuario");
+        List<Tarefa> todasAsTarefas = tarefaSpringMongoDBRepository.findAllByIdUsuario(idUsuario);
+        log.info("[finaliza] TarefaRestController - buscaTarefaPorIdUsuario");
+        return todasAsTarefas;
+    }
 }
