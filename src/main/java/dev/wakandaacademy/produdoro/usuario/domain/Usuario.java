@@ -44,6 +44,9 @@ public class Usuario {
 		this.configuracao = new ConfiguracaoUsuario(configuracaoPadrao);
 	}
 
+	public Usuario(UUID mockIdUsuario, String mail) {
+	}
+
 	public void validaUsuario(UUID idUsuario) {
 		if (!this.idUsuario.equals(idUsuario)) {
 			throw APIException.build(HttpStatus.UNAUTHORIZED,"Credencial de autenticação não é válida");

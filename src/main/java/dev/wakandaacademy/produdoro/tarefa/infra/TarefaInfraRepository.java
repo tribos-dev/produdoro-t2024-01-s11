@@ -49,9 +49,9 @@ public class TarefaInfraRepository implements TarefaRepository {
 
     @Override
     public List<Tarefa> buscaTarefaPorIdUsuario(UUID idUsuario) {
-        log.info("[inicia] TarefaRestController - buscaTarefaPorIdUsuario");
+        log.info("[inicia] TarefaInfraRepository - buscaTarefaPorIdUsuario");
         List<Tarefa> todasAsTarefas = tarefaSpringMongoDBRepository.findAllByIdUsuarioOrderByPosicaoAsc(idUsuario);
-        log.info("[finaliza] TarefaRestController - buscaTarefaPorIdUsuario");
+        log.info("[finaliza] TarefaInfraRepository - buscaTarefaPorIdUsuario");
         return todasAsTarefas;
     }
 
@@ -61,7 +61,7 @@ public class TarefaInfraRepository implements TarefaRepository {
 
     @Override
     public void defineNovaPosicaoTarefa(Tarefa tarefa, List<Tarefa> tarefas, NovaPosicaoRequest novaPosicao) {
-        log.info("[inicia] TarefaRestController - defineNovaPosicaoTarefa");
+        log.info("[inicia] TarefaInfraRepository - defineNovaPosicaoTarefa");
         validaNovaPosicao(tarefa, tarefas, novaPosicao);
         int posicaoAtualTarefa = tarefa.getPosicao();
         int novaPosicaoTarefa = novaPosicao.getNovaPosicao();
@@ -74,7 +74,7 @@ public class TarefaInfraRepository implements TarefaRepository {
         }
         tarefa.alteraPosicao(novaPosicaoTarefa);
         atualizaPosicaoTarefa(tarefa, novaPosicaoTarefa);
-        log.info("[finaliza] TarefaRestController - defineNovaPosicaoTarefa");
+        log.info("[finaliza] TarefaInfraRepository - defineNovaPosicaoTarefa");
     }
 
     private void atualizaPosicaoTarefa(Tarefa tarefa, int novaPosicao) {
@@ -86,9 +86,9 @@ public class TarefaInfraRepository implements TarefaRepository {
     private void validaNovaPosicao(Tarefa tarefa, List<Tarefa> todasTarefas, NovaPosicaoRequest novaPosicao) {
         int posicaoAntiga = tarefa.getPosicao();
         int tamanhoListaTarefa = todasTarefas.size();
-        if (novaPosicao.getNovaPosicao() >= tamanhoListaTarefa || novaPosicao.getNovaPosicao().equals(posicaoAntiga)) {
+        if (novaPosicao.getNovaPosicao() > tamanhoListaTarefa || novaPosicao.getNovaPosicao().equals(posicaoAntiga)) {
             String mensagem = novaPosicao.getNovaPosicao() >= tamanhoListaTarefa
-                    ? "A posição da tarefa não pode ser maior ou igual à quantidade total de tarefas do usuário."
+                    ? "A posição da tarefa não pode ser maior que quantidade total de tarefas do usuário."
                     : "A posição da tarefa é igual a posição atual da tarefa, insira nova posição";
             throw APIException.build(HttpStatus.BAD_REQUEST, mensagem);
         }
