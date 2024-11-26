@@ -74,13 +74,13 @@ public class Tarefa {
 
 	private void verificaQuantidadePomodoro(Tarefa tarefa, Usuario usuario) {
 		int totalPomodoro = tarefa.getContagemPomodoro();
-		if(totalPomodoro % 4 == 0){
-			//usuario.mudaStatusParaPausaLonga();
+		if (totalPomodoro % 4 == 0) {
+			// usuario.mudaStatusParaPausaLonga(usuario.getIdUsuario());
 		} else {
-			usuario.mudaStatusParaPausaCurta();
+			usuario.mudaStatusParaPausaCurta(usuario.getIdUsuario());
+		}
+
 	}
-	
-}
 
 	public void validaToken(Usuario usuario) {
 		if (!this.idUsuario.equals(usuario.getIdUsuario())) {

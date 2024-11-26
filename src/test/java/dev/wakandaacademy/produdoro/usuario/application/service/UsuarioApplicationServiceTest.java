@@ -1,11 +1,6 @@
 package dev.wakandaacademy.produdoro.usuario.application.service;
 
-<<<<<<< HEAD
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-=======
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -30,25 +25,10 @@ import dev.wakandaacademy.produdoro.usuario.domain.StatusUsuario;
 import dev.wakandaacademy.produdoro.usuario.domain.Usuario;
 
 @ExtendWith(MockitoExtension.class)
->>>>>>> 6abe0c201839a1d1f64277db628dfaeeacdd4f63
-
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import dev.wakandaacademy.produdoro.DataHelper;
-import dev.wakandaacademy.produdoro.usuario.application.repository.UsuarioRepository;
-import dev.wakandaacademy.produdoro.usuario.domain.StatusUsuario;
-import dev.wakandaacademy.produdoro.usuario.domain.Usuario;
-
-@ExtendWith(MockitoExtension.class)
 class UsuarioApplicationServiceTest {
 
 	@InjectMocks
 	UsuarioApplicationService usuarioApplicationService;
-<<<<<<< HEAD
 	
 	@Mock
 	UsuarioRepository usuarioRepository;
@@ -64,11 +44,6 @@ class UsuarioApplicationServiceTest {
 		verify(usuarioRepository, times(1)).buscaUsuarioPorEmail(usuario.getEmail());
 	}
 	
-=======
-
-	@Mock
-	UsuarioRepository usuarioRepository;
-
 	@Test
 	void deveMudarStatusParaPausaCurta_QuandoStatusEstiverDiferente() {
 
@@ -100,7 +75,4 @@ class UsuarioApplicationServiceTest {
 	        assertEquals("Usuário já está em Pausa Curta.", exception.getMessage());
 	        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusException());
 	    }
-
-
->>>>>>> 6abe0c201839a1d1f64277db628dfaeeacdd4f63
 }
