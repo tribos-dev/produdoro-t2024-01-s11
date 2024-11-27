@@ -1,5 +1,6 @@
 package dev.wakandaacademy.produdoro.usuario.domain;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.validation.constraints.Email;
@@ -66,6 +67,12 @@ public class Usuario {
 			throw APIException.build(HttpStatus.BAD_REQUEST, "Usuário já está em Pausa Curta.");
 		}
 	}
+
+	public void validacaoUsuario(Usuario usuarioPorEmail) {
+        if (!this.idUsuario.equals(usuarioPorEmail.getIdUsuario())) {
+            throw APIException.build(HttpStatus.UNAUTHORIZED, "Usuário não autorizado para requisição solicitada!");
+        }
+    }
 
 	private void pertenceAoUsuario(UUID idUsuario) {
 		if (!this.idUsuario.equals(idUsuario)) {
