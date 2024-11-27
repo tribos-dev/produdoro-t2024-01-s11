@@ -52,11 +52,52 @@ public class Tarefa {
 	}
 
 	public void pertenceAoUsuario(Usuario usuarioPorEmail) {
-		if(!this.idUsuario.equals(usuarioPorEmail.getIdUsuario())) {
+		if (!this.idUsuario.equals(usuarioPorEmail.getIdUsuario())) {
 			throw APIException.build(HttpStatus.UNAUTHORIZED, "Usuário não é dono da Tarefa solicitada!");
 		}
 	}
-  
+
+	public void incrementaPomodoro(Tarefa tarefa, Usuario usuario) {
+		pertenceAoUsuario(usuario);
+		if (!usuario.getStatus().equals(StatusUsuario.FOCO)) {
+			ativaTarefa();
+			usuario.mudaParaFoco(usuario.getIdUsuario());
+		} else {
+			tarefa.incrementaPomodoro();
+			verificaQuantidadePomodoro(tarefa, usuario);
+			
+		}
+	}
+
+	private void incrementaPomodoro() {
+		this.contagemPomodoro++;
+	}
+
+	private void verificaQuantidadePomodoro(Tarefa tarefa, Usuario usuario) {
+		int totalPomodoro = tarefa.getContagemPomodoro();
+		if (totalPomodoro % 4 == 0) {
+			usuario.mudaStatusParaPausaLonga(usuario.getIdUsuario());
+		} else {
+			usuario.mudaStatusParaPausaCurta(usuario.getIdUsuario());
+		}
+	}
+
+	public void validaToken(Usuario usuario) {
+		if (!this.idUsuario.equals(usuario.getIdUsuario())) {
+			throw APIException.build(HttpStatus.UNAUTHORIZED, "Token não corresponde ao dono da tarefa!");
+		}
+	}
+
+	public void verificaSeEstaAtiva() {
+		if (this.statusAtivacao.equals(StatusAtivacaoTarefa.ATIVA)) {
+			throw APIException.build(HttpStatus.CONFLICT, "Tarefa já está ativa!");
+		}
+	}
+
+	public void ativaTarefa() {
+		this.statusAtivacao = StatusAtivacaoTarefa.ATIVA;
+	}
+
 	public void concluiTarefa() {
 		this.status = StatusTarefa.CONCLUIDA;
 	}

@@ -1,9 +1,5 @@
 package dev.wakandaacademy.produdoro.usuario.application.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -46,7 +42,7 @@ class UsuarioApplicationServiceTest {
 		assertEquals(StatusUsuario.FOCO, usuario.getStatus());
 		verify(usuarioRepository, times(1)).buscaUsuarioPorEmail(usuario.getEmail());
 	}
-
+  
 	@Test
 	void deveMudarStatusParaPausaCurta_QuandoStatusEstiverDiferente() {
 
