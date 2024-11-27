@@ -98,7 +98,6 @@ public class Tarefa {
 		this.statusAtivacao = StatusAtivacaoTarefa.ATIVA;
 	}
 
-
 	public void concluiTarefa() {
 		this.status = StatusTarefa.CONCLUIDA;
 	}

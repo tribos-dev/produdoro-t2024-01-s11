@@ -21,8 +21,6 @@ import lombok.extern.log4j.Log4j2;
 public class UsuarioController implements UsuarioAPI {
 
 	private final UsuarioService usuarioApplicationService;
-	
-	private final UsuarioService usuarioAppplicationService;
 
 	private final TokenService tokenService;
 
@@ -41,7 +39,6 @@ public class UsuarioController implements UsuarioAPI {
 		log.info("[finaliza] UsuarioController - buscaUsuarioPorId");
 		return buscaUsuario;
 	}
-
 	
 	@Override
 	public void mudaStatusParaFoco(String token, UUID idUsuario) {

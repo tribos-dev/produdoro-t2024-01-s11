@@ -143,6 +143,19 @@ class TarefaApplicationServiceTest {
     }
     
     @Test
+    void deletaTarefasSucesso() {
+        Usuario usuario = DataHelper.createUsuario();
+        List<Tarefa> tarefasDoUsuario = DataHelper.createListTarefa();
+        String email = usuario.getEmail();
+        UUID idUsuario = usuario.getIdUsuario();
+        when(usuarioRepository.buscaUsuarioPorId(any())).thenReturn(usuario);
+        when(usuarioRepository.buscaUsuarioPorEmail(any())).thenReturn(usuario);
+        when(tarefaRepository.buscaTarefaPorIdUsuario(any())).thenReturn(tarefasDoUsuario);
+        tarefaApplicationService.deletarTodasAsTarefas(email, idUsuario);
+        verify(tarefaRepository, times(1)).deletaTodasAsTarefas(tarefasDoUsuario);
+    }
+
+    @Test
     void deletaTarefasConcluidasSucesso() {
         Usuario usuario = DataHelper.createUsuario();
         List<Tarefa> listaTarefas = DataHelper.createListTarefa();
