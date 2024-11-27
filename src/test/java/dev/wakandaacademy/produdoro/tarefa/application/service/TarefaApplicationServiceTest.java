@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,7 +66,18 @@ class TarefaApplicationServiceTest {
         assertEquals(8, response.size());
     }
 
-
+    @Test
+    void deletaTarefasSucesso() {
+        Usuario usuario = DataHelper.createUsuario();
+        List<Tarefa> tarefasDoUsuario = DataHelper.createListTarefa();
+        String email = usuario.getEmail();
+        UUID idUsuario = usuario.getIdUsuario();
+        when(usuarioRepository.buscaUsuarioPorId(any())).thenReturn(usuario);
+        when(usuarioRepository.buscaUsuarioPorEmail(any())).thenReturn(usuario);
+        when(tarefaRepository.buscaTarefaPorIdUsuario(any())).thenReturn(tarefasDoUsuario);
+        tarefaApplicationService.deletarTodasAsTarefas(email, idUsuario);
+        verify(tarefaRepository, times(1)).deletaTodasAsTarefas(tarefasDoUsuario);
+    }
 
     public TarefaRequest getTarefaRequest() {
         TarefaRequest request = new TarefaRequest("tarefa 1", UUID.randomUUID(), null, null, 0);
