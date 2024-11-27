@@ -2,6 +2,7 @@ package dev.wakandaacademy.produdoro.tarefa.application.service;
 
 import dev.wakandaacademy.produdoro.handler.APIException;
 import dev.wakandaacademy.produdoro.tarefa.application.api.TarefaIdResponse;
+import dev.wakandaacademy.produdoro.tarefa.application.api.TarefaListResponse;
 import dev.wakandaacademy.produdoro.tarefa.application.api.TarefaRequest;
 import dev.wakandaacademy.produdoro.tarefa.application.repository.TarefaRepository;
 import dev.wakandaacademy.produdoro.tarefa.domain.Tarefa;
@@ -12,7 +13,9 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Log4j2
@@ -51,4 +54,59 @@ public class TarefaApplicationService implements TarefaService {
 		tarefaRepository.salva(tarefa);
 		log.info("[finaliza] TarefaApplicationService - incrementaPomodoro");
 	}
+
+    @Override
+    public void concluiTarefa(String usuarioEmail, UUID idTarefa) {
+        log.info("[inicia] TarefaApplicationService - concluiTarefa");
+        Tarefa tarefa = detalhaTarefa(usuarioEmail, idTarefa);
+        tarefa.concluiTarefa();
+        tarefaRepository.salva(tarefa);
+        log.info("[finaliza] TarefaApplicationService - concluiTarefa");
+    }
+
+    public List<TarefaListResponse> buscarTodasAsTarefas(String usuario, UUID idUsuario) {
+        log.info("[inicia] TarefaRestController - buscarTodasAsTarefas");
+        Usuario usuarioPorEmail = usuarioRepository.buscaUsuarioPorEmail(usuario);
+        usuarioRepository.buscaUsuarioPorId(idUsuario);
+        usuarioPorEmail.validaUsuario(idUsuario);
+        List<Tarefa> tarefas = tarefaRepository.buscaTarefaPorIdUsuario(idUsuario);
+        log.info("[finaliza] TarefaRestController - buscarTodasAsTarefas");
+        return TarefaListResponse.converter(tarefas);
+    }
+
+    @Override
+    public void deletarTodasAsTarefas(String usuarioEmail, UUID idUsuario) {
+        log.info("[inicia] TarefaApplicationService - deletarTodasAsTarefas");
+        Usuario usuarioPorEmail = usuarioRepository.buscaUsuarioPorEmail(usuarioEmail);
+        Usuario usuario = usuarioRepository.buscaUsuarioPorId(idUsuario);
+        usuario.validacaoUsuario(usuarioPorEmail);
+        List<Tarefa> tarefas = tarefaRepository.buscaTarefaPorIdUsuario(usuario.getIdUsuario());
+        if(tarefas.isEmpty()){
+            throw APIException.build(HttpStatus.CONFLICT,"Usuário não possui tarefa(as) cadastrada(as)");
+        }
+        tarefaRepository.deletaTodasAsTarefas(tarefas);
+        log.info("[finaliza] TarefaApplicationService - deletarTodasAsTarefas");
+    }
+
+    @Override
+    public void deletaTarefasConcluidas(String usuarioEmail, UUID idUsuario) {
+        log.info("[inicia] TarefaRestController - deletaTarefasConcluidas");
+        validaUsuario(usuarioEmail, idUsuario);
+        List<Tarefa> tarefasConcluidas = tarefaRepository.buscaTarefasConcluidas(idUsuario);
+        verificaSeTemTarefasConcluidas(tarefasConcluidas);
+        tarefaRepository.deletaTarefasConcluidas(tarefasConcluidas);
+        log.info("[finaliza] TarefaRestController - deletaTarefasConcluidas");
+    }
+
+    private void validaUsuario(String usuarioEmail, UUID idUsuario) {
+        Usuario usuarioPorEmail = usuarioRepository.buscaUsuarioPorEmail(usuarioEmail);
+        Usuario usuario = usuarioRepository.buscaUsuarioPorId(idUsuario);
+        usuario.validaUsuario(usuarioPorEmail.getIdUsuario());
+    }
+
+    private void verificaSeTemTarefasConcluidas(List<Tarefa> tarefasConcluidas) {
+        if (tarefasConcluidas.isEmpty()) {
+            throw APIException.build(HttpStatus.NOT_FOUND, "O usuário não possui tarefas concluídas");
+        }
+    }
 }

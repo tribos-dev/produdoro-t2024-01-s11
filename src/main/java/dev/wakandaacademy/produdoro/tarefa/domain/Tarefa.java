@@ -46,7 +46,7 @@ public class Tarefa {
 		this.descricao = tarefaRequest.getDescricao();
 		this.idArea = tarefaRequest.getIdArea();
 		this.idProjeto = tarefaRequest.getIdProjeto();
-		this.status = StatusTarefa.A_FAZER;
+		this.status = StatusTarefa.CONCLUIDA;
 		this.statusAtivacao = StatusAtivacaoTarefa.INATIVA;
 		this.contagemPomodoro = 1;
 	}
@@ -56,27 +56,8 @@ public class Tarefa {
 			throw APIException.build(HttpStatus.UNAUTHORIZED, "Usuário não é dono da Tarefa solicitada!");
 		}
 	}
-
-	public void incrementaPomodoro(Tarefa tarefa, Usuario usuario) {
-		pertenceAoUsuario(usuario);
-		if(usuario.getStatus().equals(StatusUsuario.FOCO)) {
-			tarefa.incrementaPomodoro();
-			//verificaQuantidadePomodoro(tarefa, usuario);
-		}
-		
+  
+	public void concluiTarefa() {
+		this.status = StatusTarefa.CONCLUIDA;
 	}
-	
-	private int incrementaPomodoro() {
-		return ++contagemPomodoro;
-	}
-	
-	/*private void verificaQuantidadePomodoro(Tarefa tarefa, Usuario usuario) {
-		int totalPomodoro = tarefa.getContagemPomodoro();
-		if(totalPomodoro % 4 == 0){
-		ColocarmetodoPausaLonga;
-		} else {
-		colocarmetodoPausaCurta;
-		}
-		
-	}*/
 }
