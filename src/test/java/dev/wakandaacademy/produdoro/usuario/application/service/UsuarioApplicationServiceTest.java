@@ -66,7 +66,7 @@ class UsuarioApplicationServiceTest {
 	}
 	
 	 @Test
-	    void naoDeveMudarStatusParaPausaCurta_QuandoStatusEstiverEmPausaCurta() {
+	 void naoDeveMudarStatusParaPausaCurta_QuandoStatusEstiverEmPausaCurta() {
 	        Usuario usuario = DataHelper.createUsuario();
 	        when(usuarioRepository.buscaUsuarioPorEmail(usuario.getEmail())).thenReturn(usuario);
 	        when(usuarioRepository.buscaUsuarioPorId(any())).thenReturn(usuario);
@@ -75,4 +75,25 @@ class UsuarioApplicationServiceTest {
 	        assertEquals("Usuário já está em Pausa Curta.", exception.getMessage());
 	        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusException());
 	    }
+
+	@Test
+	void deveMudaStatusParaPausaLonga() {
+		Usuario usuario = DataHelper.createUsuario();
+
+		when(usuarioRepository.buscaUsuarioPorEmail(anyString())).thenReturn(usuario);
+		when(usuarioRepository.buscaUsuarioPorId(any())).thenReturn(usuario);
+		usuarioApplicationService.mudaStatusParaPausaLonga(usuario.getEmail(), usuario.getIdUsuario());
+		assertEquals(StatusUsuario.PAUSA_LONGA, usuario.getStatus());
+		verify(usuarioRepository, times(1)).salva(usuario);
+	}
+
+	@Test
+	void naoDeveMudarParaPausaLonga() {
+		Usuario usuario = DataHelper.createUsuario();
+
+		UUID idUsuarioInvalido = UUID.fromString("e8d30618-a4b9-4f1d-be80-6e27b2d1c387");
+		when(usuarioRepository.buscaUsuarioPorEmail(anyString())).thenReturn(usuario);
+		APIException ex = assertThrows(APIException.class, () -> usuarioApplicationService.mudaStatusParaPausaLonga(usuario.getEmail(), idUsuarioInvalido));
+		assertEquals(HttpStatus.UNAUTHORIZED, ex.getStatusException());
+	}
 }

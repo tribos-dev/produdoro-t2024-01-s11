@@ -46,7 +46,7 @@ public class Tarefa {
 		this.descricao = tarefaRequest.getDescricao();
 		this.idArea = tarefaRequest.getIdArea();
 		this.idProjeto = tarefaRequest.getIdProjeto();
-		this.status = StatusTarefa.A_FAZER;
+		this.status = StatusTarefa.CONCLUIDA;
 		this.statusAtivacao = StatusAtivacaoTarefa.INATIVA;
 		this.contagemPomodoro = 1;
 	}
@@ -65,21 +65,21 @@ public class Tarefa {
 		} else {
 			tarefa.incrementaPomodoro();
 			verificaQuantidadePomodoro(tarefa, usuario);
+			
 		}
 	}
 
-	private int incrementaPomodoro() {
-		return ++contagemPomodoro;
+	private void incrementaPomodoro() {
+		this.contagemPomodoro++;
 	}
 
 	private void verificaQuantidadePomodoro(Tarefa tarefa, Usuario usuario) {
 		int totalPomodoro = tarefa.getContagemPomodoro();
 		if (totalPomodoro % 4 == 0) {
-			// usuario.mudaStatusParaPausaLonga(usuario.getIdUsuario());
+			usuario.mudaStatusParaPausaLonga(usuario.getIdUsuario());
 		} else {
 			usuario.mudaStatusParaPausaCurta(usuario.getIdUsuario());
 		}
-
 	}
 
 	public void validaToken(Usuario usuario) {
@@ -98,4 +98,8 @@ public class Tarefa {
 		this.statusAtivacao = StatusAtivacaoTarefa.ATIVA;
 	}
 
+
+	public void concluiTarefa() {
+		this.status = StatusTarefa.CONCLUIDA;
+	}
 }
