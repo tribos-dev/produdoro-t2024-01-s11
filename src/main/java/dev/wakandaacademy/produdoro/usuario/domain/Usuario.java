@@ -52,10 +52,8 @@ public class Usuario {
     }
 
     public void validacaoUsuario(Usuario usuarioPorEmail) {
-        Optional.of(this.idUsuario)
-                .filter(id -> id.equals(idUsuario))
-                .orElseThrow(() -> APIException
-                        .build(HttpStatus.UNAUTHORIZED, "Usuário(a) não autorizado(a) para a requisição solicitada!"));
-
+        if (!this.idUsuario.equals(usuarioPorEmail.getIdUsuario())) {
+            throw APIException.build(HttpStatus.UNAUTHORIZED, "Usuário não autorizado para requisição solicitada!");
+        }
     }
 }
