@@ -1,5 +1,9 @@
 package dev.wakandaacademy.produdoro.usuario.application.service;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -24,14 +28,24 @@ import dev.wakandaacademy.produdoro.usuario.domain.StatusUsuario;
 import dev.wakandaacademy.produdoro.usuario.domain.Usuario;
 
 @ExtendWith(MockitoExtension.class)
-
 class UsuarioApplicationServiceTest {
 
 	@InjectMocks
 	UsuarioApplicationService usuarioApplicationService;
-
+	
 	@Mock
 	UsuarioRepository usuarioRepository;
+	
+	@Test
+	void mudaStatusParaFoco() { 
+		//cenario
+		Usuario usuario = DataHelper.createUsuario();
+		when(usuarioRepository.buscaUsuarioPorEmail(usuario.getEmail())).thenReturn(usuario);
+		when(usuarioRepository.buscaUsuarioPorId(usuario.getIdUsuario())).thenReturn(usuario);
+		usuarioApplicationService.mudaStatusParaFoco(usuario.getEmail(), usuario.getIdUsuario());
+		assertEquals(StatusUsuario.FOCO, usuario.getStatus());
+		verify(usuarioRepository, times(1)).buscaUsuarioPorEmail(usuario.getEmail());
+	}
 
 	@Test
 	void deveMudarStatusParaPausaCurta_QuandoStatusEstiverDiferente() {
