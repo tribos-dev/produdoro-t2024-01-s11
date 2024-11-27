@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Log4j2
@@ -44,6 +45,14 @@ public class TarefaApplicationService implements TarefaService {
     }
 
     @Override
+    public void concluiTarefa(String usuarioEmail, UUID idTarefa) {
+        log.info("[inicia] TarefaApplicationService - concluiTarefa");
+        Tarefa tarefa = detalhaTarefa(usuarioEmail, idTarefa);
+        tarefa.concluiTarefa();
+        tarefaRepository.salva(tarefa);
+        log.info("[finaliza] TarefaApplicationService - concluiTarefa");
+    }
+
     public List<TarefaListResponse> buscarTodasAsTarefas(String usuario, UUID idUsuario) {
         log.info("[inicia] TarefaRestController - buscarTodasAsTarefas");
         Usuario usuarioPorEmail = usuarioRepository.buscaUsuarioPorEmail(usuario);
@@ -68,4 +77,25 @@ public class TarefaApplicationService implements TarefaService {
         log.info("[finaliza] TarefaApplicationService - deletarTodasAsTarefas");
     }
 
+    @Override
+    public void deletaTarefasConcluidas(String usuarioEmail, UUID idUsuario) {
+        log.info("[inicia] TarefaRestController - deletaTarefasConcluidas");
+        validaUsuario(usuarioEmail, idUsuario);
+        List<Tarefa> tarefasConcluidas = tarefaRepository.buscaTarefasConcluidas(idUsuario);
+        verificaSeTemTarefasConcluidas(tarefasConcluidas);
+        tarefaRepository.deletaTarefasConcluidas(tarefasConcluidas);
+        log.info("[finaliza] TarefaRestController - deletaTarefasConcluidas");
+    }
+
+    private void validaUsuario(String usuarioEmail, UUID idUsuario) {
+        Usuario usuarioPorEmail = usuarioRepository.buscaUsuarioPorEmail(usuarioEmail);
+        Usuario usuario = usuarioRepository.buscaUsuarioPorId(idUsuario);
+        usuario.validaUsuario(usuarioPorEmail.getIdUsuario());
+    }
+
+    private void verificaSeTemTarefasConcluidas(List<Tarefa> tarefasConcluidas) {
+        if (tarefasConcluidas.isEmpty()) {
+            throw APIException.build(HttpStatus.NOT_FOUND, "O usuário não possui tarefas concluídas");
+        }
+    }
 }

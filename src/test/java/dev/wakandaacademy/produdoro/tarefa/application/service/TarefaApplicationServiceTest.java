@@ -1,16 +1,17 @@
 package dev.wakandaacademy.produdoro.tarefa.application.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import dev.wakandaacademy.produdoro.DataHelper;
+import dev.wakandaacademy.produdoro.tarefa.domain.StatusTarefa;
 import dev.wakandaacademy.produdoro.tarefa.application.api.TarefaListResponse;
 import dev.wakandaacademy.produdoro.usuario.application.repository.UsuarioRepository;
 import dev.wakandaacademy.produdoro.usuario.domain.Usuario;
@@ -36,8 +37,10 @@ class TarefaApplicationServiceTest {
     @Mock
     TarefaRepository tarefaRepository;
 
+    //	@MockBean
     @Mock
     UsuarioRepository usuarioRepository;
+
 
     @Test
     void deveRetornarIdTarefaNovaCriada() {
@@ -49,6 +52,16 @@ class TarefaApplicationServiceTest {
         assertNotNull(response);
         assertEquals(TarefaIdResponse.class, response.getClass());
         assertEquals(UUID.class, response.getIdTarefa().getClass());
+    }
+
+    @Test
+    void deveConcluirTarefa() {
+        Usuario usuario = DataHelper.createUsuario();
+        Tarefa tarefa = DataHelper.createTarefa();
+        when(usuarioRepository.buscaUsuarioPorEmail(any())).thenReturn(usuario);
+        when(tarefaRepository.buscaTarefaPorId(any())).thenReturn(Optional.of(tarefa));
+        tarefaApplicationService.concluiTarefa(usuario.getEmail(), tarefa.getIdTarefa());
+        assertEquals(tarefa.getStatus(), StatusTarefa.CONCLUIDA);
     }
 
     @Test
@@ -77,6 +90,18 @@ class TarefaApplicationServiceTest {
         when(tarefaRepository.buscaTarefaPorIdUsuario(any())).thenReturn(tarefasDoUsuario);
         tarefaApplicationService.deletarTodasAsTarefas(email, idUsuario);
         verify(tarefaRepository, times(1)).deletaTodasAsTarefas(tarefasDoUsuario);
+    }
+    @Test
+    void deletaTarefasConcluidasSucesso() {
+        Usuario usuario = DataHelper.createUsuario();
+        List<Tarefa> listaTarefas = DataHelper.createListTarefa();
+        String email = usuario.getEmail();
+        UUID idUsuario = usuario.getIdUsuario();
+        when(usuarioRepository.buscaUsuarioPorEmail(any())).thenReturn(usuario);
+        when(usuarioRepository.buscaUsuarioPorId(any())).thenReturn(usuario);
+        when(tarefaRepository.buscaTarefasConcluidas(any())).thenReturn(listaTarefas);
+        tarefaApplicationService.deletaTarefasConcluidas(email, idUsuario);
+        verify(tarefaRepository, times(1)).deletaTarefasConcluidas(listaTarefas);
     }
 
     public TarefaRequest getTarefaRequest() {

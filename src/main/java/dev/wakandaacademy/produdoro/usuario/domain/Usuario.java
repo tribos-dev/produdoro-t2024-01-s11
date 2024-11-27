@@ -27,33 +27,72 @@ import org.springframework.http.HttpStatus;
 @ToString
 @Document(collection = "Usuario")
 public class Usuario {
-    @Id
-    private UUID idUsuario;
-    @Email
-    @Indexed(unique = true)
-    private String email;
-    private ConfiguracaoUsuario configuracao;
-    @Builder.Default
-    private StatusUsuario status = StatusUsuario.FOCO;
-    @Builder.Default
-    private Integer quantidadePomodorosPausaCurta = 0;
+	@Id
+	private UUID idUsuario;
+	@Email
+	@Indexed(unique = true)
+	private String email;
+	private ConfiguracaoUsuario configuracao;
+	@Builder.Default
+	private StatusUsuario status = StatusUsuario.FOCO;
+	@Builder.Default
+	private Integer quantidadePomodorosPausaCurta = 0;
 
-    public Usuario(UsuarioNovoRequest usuarioNovo, ConfiguracaoPadrao configuracaoPadrao) {
-        this.idUsuario = UUID.randomUUID();
-        this.email = usuarioNovo.getEmail();
-        this.status = StatusUsuario.FOCO;
-        this.configuracao = new ConfiguracaoUsuario(configuracaoPadrao);
-    }
+	public Usuario(UsuarioNovoRequest usuarioNovo, ConfiguracaoPadrao configuracaoPadrao) {
+		this.idUsuario = UUID.randomUUID();
+		this.email = usuarioNovo.getEmail();
+		this.status = StatusUsuario.FOCO;
+		this.configuracao = new ConfiguracaoUsuario(configuracaoPadrao);
+	}
 
-    public void validaUsuario(UUID idUsuario) {
-        if (!this.idUsuario.equals(idUsuario)) {
-            throw APIException.build(HttpStatus.UNAUTHORIZED, "Credencial de autenticação não é válida");
-        }
-    }
+	public void validaUsuario(UUID idUsuario) {
+		if (!this.idUsuario.equals(idUsuario)) {
+			throw APIException.build(HttpStatus.UNAUTHORIZED, "Credencial de autenticação não é válida");
+		}
+	}
 
-    public void validacaoUsuario(Usuario usuarioPorEmail) {
+	public void mudaStatusParaPausaCurta() {
+		this.status = StatusUsuario.PAUSA_CURTA;
+
+	}
+
+	public void mudaStatusParaPausaCurta(UUID idUsuario) {
+		pertenceAoUsuario(idUsuario);
+		verificaSeJaEstaEmPausaCurta();
+		mudaStatusParaPausaCurta();
+	}
+
+	public void verificaSeJaEstaEmPausaCurta() {
+		if (this.status.equals(StatusUsuario.PAUSA_CURTA)) {
+			throw APIException.build(HttpStatus.BAD_REQUEST, "Usuário já está em Pausa Curta.");
+		}
+	}
+
+	public void validacaoUsuario(Usuario usuarioPorEmail) {
         if (!this.idUsuario.equals(usuarioPorEmail.getIdUsuario())) {
             throw APIException.build(HttpStatus.UNAUTHORIZED, "Usuário não autorizado para requisição solicitada!");
         }
     }
+
+	private void pertenceAoUsuario(UUID idUsuario) {
+		if (!this.idUsuario.equals(idUsuario)) {
+			throw APIException.build(HttpStatus.UNAUTHORIZED, "Credencial de autenticação não é válida.");
+		}
+	}
+
+    public void mudaStatusParaPausaLonga(UUID idUsuario) {
+		pertenceAoUsuario(idUsuario);
+		validaStatusPausaLonga();
+		mudaStatusPausaLonga();
+    }
+
+	private void mudaStatusPausaLonga() {
+		this.status = StatusUsuario.PAUSA_LONGA;
+	}
+
+	private void validaStatusPausaLonga() {
+		if(this.status.equals(StatusUsuario.PAUSA_LONGA)){
+			throw APIException.build(HttpStatus.BAD_REQUEST,"Usuário já esta em PAUSA LONGA!");
+		}
+	}
 }

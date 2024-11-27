@@ -45,7 +45,7 @@ public class Tarefa {
 		this.descricao = tarefaRequest.getDescricao();
 		this.idArea = tarefaRequest.getIdArea();
 		this.idProjeto = tarefaRequest.getIdProjeto();
-		this.status = StatusTarefa.A_FAZER;
+		this.status = StatusTarefa.CONCLUIDA;
 		this.statusAtivacao = StatusAtivacaoTarefa.INATIVA;
 		this.contagemPomodoro = 1;
 	}
@@ -54,5 +54,9 @@ public class Tarefa {
 		if(!this.idUsuario.equals(usuarioPorEmail.getIdUsuario())) {
 			throw APIException.build(HttpStatus.UNAUTHORIZED, "Usuário não é dono da Tarefa solicitada!");
 		}
+	}
+
+	public void concluiTarefa() {
+		this.status = StatusTarefa.CONCLUIDA;
 	}
 }
