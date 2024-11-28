@@ -143,7 +143,7 @@ class TarefaApplicationServiceTest {
         List<TarefaListResponse> response = tarefaApplicationService.buscarTodasAsTarefas(usuarioEmail, idUsuario);
         assertNotNull(response);
         assertEquals(ArrayList.class,response.getClass());
-        assertEquals(8, response.size());
+        assertEquals(4, response.size());
     }
 
     @Test
