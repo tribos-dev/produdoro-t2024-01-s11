@@ -12,10 +12,11 @@ public interface TarefaRepository {
 
     Tarefa salva(Tarefa tarefa);
     Optional<Tarefa> buscaTarefaPorId(UUID idTarefa);
-
+    void inativaTarefa(UUID idUsuario);
     List<Tarefa> buscaTarefaPorIdUsuario(UUID idUsuario);
-
     Integer contagemPosicao(UUID idUsuario);
-
     void defineNovaPosicaoTarefa(Tarefa tarefa, List<Tarefa> todasTarefas, NovaPosicaoRequest novaPosicao);
+    void deletaTodasAsTarefas(List<Tarefa> tarefas);
+    List<Tarefa> buscaTarefasConcluidas(UUID idUsuario);
+    void deletaTarefasConcluidas(List<Tarefa> tarefasConcluidas);
 }

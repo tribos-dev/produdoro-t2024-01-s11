@@ -3,6 +3,11 @@ package dev.wakandaacademy.produdoro.tarefa.infra;
 import dev.wakandaacademy.produdoro.handler.APIException;
 import dev.wakandaacademy.produdoro.tarefa.application.api.NovaPosicaoRequest;
 import dev.wakandaacademy.produdoro.tarefa.application.repository.TarefaRepository;
+
+import dev.wakandaacademy.produdoro.tarefa.domain.StatusAtivacaoTarefa;
+
+import dev.wakandaacademy.produdoro.tarefa.domain.StatusTarefa;
+
 import dev.wakandaacademy.produdoro.tarefa.domain.Tarefa;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -48,6 +53,15 @@ public class TarefaInfraRepository implements TarefaRepository {
     }
 
     @Override
+    public void inativaTarefa(UUID idUsuario) {
+        log.info("[inicia] TarefaInfraRepository - inativaTarefa");
+        Query query = new Query(Criteria.where("idUsuario").is(idUsuario)
+                .and("statusAtivacao").is(StatusAtivacaoTarefa.ATIVA));
+        Update update = new Update().set("statusAtivacao", StatusAtivacaoTarefa.INATIVA);
+        mongoTemplate.updateMulti(query, update, Tarefa.class);
+        log.info("[finaliza] TarefaInfraRepository - inativaTarefa");
+    }
+
     public List<Tarefa> buscaTarefaPorIdUsuario(UUID idUsuario) {
         log.info("[inicia] TarefaInfraRepository - buscaTarefaPorIdUsuario");
         List<Tarefa> todasAsTarefas = tarefaSpringMongoDBRepository.findAllByIdUsuarioOrderByPosicaoAsc(idUsuario);
@@ -92,5 +106,24 @@ public class TarefaInfraRepository implements TarefaRepository {
                     : "A posição da tarefa é igual a posição atual da tarefa, insira nova posição";
             throw APIException.build(HttpStatus.BAD_REQUEST, mensagem);
         }
+    public void deletaTodasAsTarefas(List<Tarefa> tarefas) {
+        log.info("[inicia] TarefaInfraRepository - deletaTodasAsTarefas");
+        tarefaSpringMongoDBRepository.deleteAll(tarefas);
+        log.info("[finaliza] TarefaInfraRepository - deletaTodasAsTarefas");
+    }
+    
+    @Override
+    public List<Tarefa> buscaTarefasConcluidas(UUID idUsuario) {
+        log.info("[inicia] TarefaRestController - buscaTarefasConcluidas");
+        List<Tarefa> tarefasConcluidas = tarefaSpringMongoDBRepository.findAllByIdUsuarioAndStatus(idUsuario, StatusTarefa.CONCLUIDA);
+        log.info("[finaliza] TarefaRestController - buscaTarefasConcluidas");
+        return tarefasConcluidas;
+    }
+
+    @Override
+    public void deletaTarefasConcluidas(List<Tarefa> tarefasConcluidas) {
+        log.info("[inicia] TarefaRestController - deletaTarefasConcluidas");
+        tarefaSpringMongoDBRepository.deleteAll(tarefasConcluidas);
+        log.info("[finaliza] TarefaRestController - deletaTarefasConcluidas");
     }
 }
