@@ -198,7 +198,7 @@ class TarefaApplicationServiceTest {
         when(usuarioRepository.buscaUsuarioPorId(any())).thenReturn(usuario);
         when(usuarioRepository.buscaUsuarioPorEmail(any())).thenReturn(usuario);
         when(tarefaRepository.buscaTarefaPorIdUsuario(any())).thenReturn(tarefasDoUsuario);
-        tarefaApplicationService.deletarTodasAsTarefas(email, idUsuario);
+        tarefaApplicationService.deletaTodasAsTarefas(email, idUsuario);
         verify(tarefaRepository, times(1)).deletaTodasAsTarefas(tarefasDoUsuario);
     }
 

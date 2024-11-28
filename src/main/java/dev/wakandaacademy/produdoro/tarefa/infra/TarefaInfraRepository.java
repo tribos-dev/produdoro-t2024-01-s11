@@ -106,12 +106,14 @@ public class TarefaInfraRepository implements TarefaRepository {
                     : "A posição da tarefa é igual a posição atual da tarefa, insira nova posição";
             throw APIException.build(HttpStatus.BAD_REQUEST, mensagem);
         }
+    }
+
     public void deletaTodasAsTarefas(List<Tarefa> tarefas) {
         log.info("[inicia] TarefaInfraRepository - deletaTodasAsTarefas");
         tarefaSpringMongoDBRepository.deleteAll(tarefas);
         log.info("[finaliza] TarefaInfraRepository - deletaTodasAsTarefas");
     }
-    
+
     @Override
     public List<Tarefa> buscaTarefasConcluidas(UUID idUsuario) {
         log.info("[inicia] TarefaRestController - buscaTarefasConcluidas");

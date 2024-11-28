@@ -111,7 +111,7 @@ public class TarefaApplicationService implements TarefaService {
     }
     
     @Override
-    public void deletarTodasAsTarefas(String usuarioEmail, UUID idUsuario) {
+    public void deletaTodasAsTarefas(String usuarioEmail, UUID idUsuario) {
         log.info("[inicia] TarefaApplicationService - deletarTodasAsTarefas");
         Usuario usuarioPorEmail = usuarioRepository.buscaUsuarioPorEmail(usuarioEmail);
         Usuario usuario = usuarioRepository.buscaUsuarioPorId(idUsuario);
