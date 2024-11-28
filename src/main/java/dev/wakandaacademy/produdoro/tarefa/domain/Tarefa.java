@@ -1,25 +1,18 @@
 package dev.wakandaacademy.produdoro.tarefa.domain;
 
-import java.util.UUID;
-
 import dev.wakandaacademy.produdoro.handler.APIException;
 import dev.wakandaacademy.produdoro.tarefa.application.api.EditaTarefaRequest;
 import dev.wakandaacademy.produdoro.tarefa.application.api.TarefaRequest;
 import dev.wakandaacademy.produdoro.usuario.domain.StatusUsuario;
 import dev.wakandaacademy.produdoro.usuario.domain.Usuario;
-
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.http.HttpStatus;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
 import javax.validation.constraints.NotBlank;
+import java.util.UUID;
 
 @Builder
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -40,8 +33,9 @@ public class Tarefa {
 	private StatusTarefa status;
 	private StatusAtivacaoTarefa statusAtivacao;
 	private int contagemPomodoro;
+	private Integer posicao;
 
-	public Tarefa(TarefaRequest tarefaRequest) {
+	public Tarefa(TarefaRequest tarefaRequest, Integer novaPosicao) {
 		this.idTarefa = UUID.randomUUID();
 		this.idUsuario = tarefaRequest.getIdUsuario();
 		this.descricao = tarefaRequest.getDescricao();
@@ -50,6 +44,7 @@ public class Tarefa {
 		this.status = StatusTarefa.CONCLUIDA;
 		this.statusAtivacao = StatusAtivacaoTarefa.INATIVA;
 		this.contagemPomodoro = 1;
+		this.posicao = novaPosicao;
 	}
 
 	public void pertenceAoUsuario(Usuario usuarioPorEmail) {
@@ -58,6 +53,10 @@ public class Tarefa {
 		}
 	}
 
+  public void alteraPosicao(int novaPosicao) {
+		this.posicao = novaPosicao;
+    }
+  
   public void edita(EditaTarefaRequest tarefaRequest) {
  		this.descricao = tarefaRequest.getDescricao();
   }
@@ -70,7 +69,6 @@ public class Tarefa {
 		} else {
 			tarefa.incrementaPomodoro();
 			verificaQuantidadePomodoro(tarefa, usuario);
-			
 		}
 	}
 
@@ -106,5 +104,4 @@ public class Tarefa {
 	public void concluiTarefa() {
 		this.status = StatusTarefa.CONCLUIDA;
 	}
-
 }

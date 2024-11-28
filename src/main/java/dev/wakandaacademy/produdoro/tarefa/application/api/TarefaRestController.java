@@ -21,7 +21,7 @@ public class TarefaRestController implements TarefaAPI {
 	private final TokenService tokenService;
 
 	public TarefaIdResponse postNovaTarefa(TarefaRequest tarefaRequest) {
-		log.info("[inicia]  TarefaRestController - postNovaTarefa  ");
+		log.info("[inicia]  TarefaRestController - postNovaTarefa");
 		TarefaIdResponse tarefaCriada = tarefaService.criaNovaTarefa(tarefaRequest);
 		log.info("[finaliza]  TarefaRestController - postNovaTarefa");
 		return tarefaCriada;
@@ -67,7 +67,15 @@ public class TarefaRestController implements TarefaAPI {
 	}
 
 	@Override
-	public void deletaTodasAsTarefas(String token, UUID idUsuario) {
+	public void alteraPosicaoTarefa(String token, UUID idTarefa, NovaPosicaoRequest novaPosicao) {
+		log.info("[inicia] TarefaRestController - alteraPosicaoTarefa");
+		String usuario = getUsuarioByToken(token);
+		tarefaService.alteraPosicaoTarefa(usuario, idTarefa, novaPosicao);
+		log.info("[finaliza] TarefaRestController - alteraPosicaoTarefa");
+  }
+  
+  @Override
+  public void deletaTodasAsTarefas(String token, UUID idUsuario) {
 		log.info("[inicia] TarefaRestController - deletaTodasAsTarefas");
 		String usuario = getUsuarioByToken(token);
 		tarefaService.deletarTodasAsTarefas(usuario, idUsuario);

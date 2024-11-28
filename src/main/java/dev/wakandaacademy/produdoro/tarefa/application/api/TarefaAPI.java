@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/v1/tarefa")
-public interface TarefaAPI {
+public interface    TarefaAPI {
     @PostMapping
     @ResponseStatus(code = HttpStatus.CREATED)
     TarefaIdResponse postNovaTarefa(@RequestBody @Valid TarefaRequest tarefaRequest);
@@ -43,6 +43,11 @@ public interface TarefaAPI {
     @ResponseStatus(code = HttpStatus.OK)
     List<TarefaListResponse> listarTodasAsTarefas(@RequestHeader(name = "Authorization",required = true) String token,
                                                   @PathVariable UUID idUsuario);
+
+    @PatchMapping("/mudarOrdem/{idTarefa}")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    void alteraPosicaoTarefa(@RequestHeader(name = "Authorization", required = true) String token,
+                             @PathVariable UUID idTarefa, @Valid @RequestBody NovaPosicaoRequest novaPosicao);
 
     @DeleteMapping("/limpar-tarefas/{idUsuario}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
