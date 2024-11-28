@@ -5,6 +5,7 @@ import java.util.UUID;
 import dev.wakandaacademy.produdoro.handler.APIException;
 import dev.wakandaacademy.produdoro.tarefa.application.api.EditaTarefaRequest;
 import dev.wakandaacademy.produdoro.tarefa.application.api.TarefaRequest;
+import dev.wakandaacademy.produdoro.usuario.domain.StatusUsuario;
 import dev.wakandaacademy.produdoro.usuario.domain.Usuario;
 
 import org.springframework.data.annotation.Id;
@@ -46,18 +47,64 @@ public class Tarefa {
 		this.descricao = tarefaRequest.getDescricao();
 		this.idArea = tarefaRequest.getIdArea();
 		this.idProjeto = tarefaRequest.getIdProjeto();
-		this.status = StatusTarefa.A_FAZER;
+		this.status = StatusTarefa.CONCLUIDA;
 		this.statusAtivacao = StatusAtivacaoTarefa.INATIVA;
 		this.contagemPomodoro = 1;
 	}
 
 	public void pertenceAoUsuario(Usuario usuarioPorEmail) {
-		if(!this.idUsuario.equals(usuarioPorEmail.getIdUsuario())) {
+		if (!this.idUsuario.equals(usuarioPorEmail.getIdUsuario())) {
 			throw APIException.build(HttpStatus.UNAUTHORIZED, "Usuário não é dono da Tarefa solicitada!");
 		}
 	}
 
-    public void edita(EditaTarefaRequest tarefaRequest) {
+  public void edita(EditaTarefaRequest tarefaRequest) {
  		this.descricao = tarefaRequest.getDescricao();
-    }
+  }
+
+	public void incrementaPomodoro(Tarefa tarefa, Usuario usuario) {
+		pertenceAoUsuario(usuario);
+		if (!usuario.getStatus().equals(StatusUsuario.FOCO)) {
+			ativaTarefa();
+			usuario.mudaParaFoco(usuario.getIdUsuario());
+		} else {
+			tarefa.incrementaPomodoro();
+			verificaQuantidadePomodoro(tarefa, usuario);
+			
+		}
+	}
+
+	private void incrementaPomodoro() {
+		this.contagemPomodoro++;
+	}
+
+	private void verificaQuantidadePomodoro(Tarefa tarefa, Usuario usuario) {
+		int totalPomodoro = tarefa.getContagemPomodoro();
+		if (totalPomodoro % 4 == 0) {
+			usuario.mudaStatusParaPausaLonga(usuario.getIdUsuario());
+		} else {
+			usuario.mudaStatusParaPausaCurta(usuario.getIdUsuario());
+		}
+	}
+
+	public void validaToken(Usuario usuario) {
+		if (!this.idUsuario.equals(usuario.getIdUsuario())) {
+			throw APIException.build(HttpStatus.UNAUTHORIZED, "Token não corresponde ao dono da tarefa!");
+		}
+	}
+
+	public void verificaSeEstaAtiva() {
+		if (this.statusAtivacao.equals(StatusAtivacaoTarefa.ATIVA)) {
+			throw APIException.build(HttpStatus.CONFLICT, "Tarefa já está ativa!");
+		}
+	}
+
+	public void ativaTarefa() {
+		this.statusAtivacao = StatusAtivacaoTarefa.ATIVA;
+	}
+
+	public void concluiTarefa() {
+		this.status = StatusTarefa.CONCLUIDA;
+	}
+
 }
