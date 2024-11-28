@@ -3,6 +3,7 @@ package dev.wakandaacademy.produdoro.tarefa.domain;
 import java.util.UUID;
 
 import dev.wakandaacademy.produdoro.handler.APIException;
+import dev.wakandaacademy.produdoro.tarefa.application.api.EditaTarefaRequest;
 import dev.wakandaacademy.produdoro.tarefa.application.api.TarefaRequest;
 import dev.wakandaacademy.produdoro.usuario.domain.StatusUsuario;
 import dev.wakandaacademy.produdoro.usuario.domain.Usuario;
@@ -57,6 +58,10 @@ public class Tarefa {
 		}
 	}
 
+  public void edita(EditaTarefaRequest tarefaRequest) {
+ 		this.descricao = tarefaRequest.getDescricao();
+  }
+
 	public void incrementaPomodoro(Tarefa tarefa, Usuario usuario) {
 		pertenceAoUsuario(usuario);
 		if (!usuario.getStatus().equals(StatusUsuario.FOCO)) {
@@ -101,4 +106,5 @@ public class Tarefa {
 	public void concluiTarefa() {
 		this.status = StatusTarefa.CONCLUIDA;
 	}
+
 }
