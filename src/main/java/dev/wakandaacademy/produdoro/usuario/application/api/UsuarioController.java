@@ -59,7 +59,7 @@ public class UsuarioController implements UsuarioAPI {
 	public void mudaStatusParaPausaCurta(String token, UUID idUsuario) {
 		log.info("[inicia] UsuarioController - mudaStatusParaPausaCurta");
 		String email = getUsuarioByToken(token);
-		usuarioAppplicationService.mudaStatusParaPausaCurta(email, idUsuario);
+		usuarioApplicationService.mudaStatusParaPausaCurta(email, idUsuario);
 		log.info("[finaliza] UsuarioController - mudaStatusParaPausaCurta");
 		
 	}
@@ -68,7 +68,7 @@ public class UsuarioController implements UsuarioAPI {
 	public void mudaStatusParaPausaLonga(String token, UUID idUsuario) {
 		log.info("[inicia] UsuarioController - mudaStatusParaPausaLonga");
 		String email = getUsuarioByToken(token);
-		usuarioAppplicationService.mudaStatusParaPausaLonga(email, idUsuario);
+		usuarioApplicationService.mudaStatusParaPausaLonga(email, idUsuario);
 		log.info("[finaliza] UsuarioController - mudaStatusParaPausaLonga");
 	}
 
