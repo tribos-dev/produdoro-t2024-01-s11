@@ -35,7 +35,7 @@ class UsuarioApplicationServiceTest {
 	@Test
 	void mudaStatusParaFoco() { 
 		//cenario
-		Usuario usuario = DataHelper.createUsuario();
+		Usuario usuario = DataHelper.createUsuario1();
 		when(usuarioRepository.buscaUsuarioPorEmail(usuario.getEmail())).thenReturn(usuario);
 		when(usuarioRepository.buscaUsuarioPorId(usuario.getIdUsuario())).thenReturn(usuario);
 		usuarioApplicationService.mudaStatusParaFoco(usuario.getEmail(), usuario.getIdUsuario());
