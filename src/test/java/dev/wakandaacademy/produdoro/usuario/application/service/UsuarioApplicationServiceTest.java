@@ -28,13 +28,13 @@ class UsuarioApplicationServiceTest {
 
 	@InjectMocks
 	UsuarioApplicationService usuarioApplicationService;
-	
+
 	@Mock
 	UsuarioRepository usuarioRepository;
-	
+
 	@Test
-	void mudaStatusParaFoco() { 
-		//cenario
+	void mudaStatusParaFoco() {
+		// cenario
 		Usuario usuario = DataHelper.createUsuario();
 		when(usuarioRepository.buscaUsuarioPorEmail(usuario.getEmail())).thenReturn(usuario);
 		when(usuarioRepository.buscaUsuarioPorId(usuario.getIdUsuario())).thenReturn(usuario);
@@ -42,7 +42,7 @@ class UsuarioApplicationServiceTest {
 		assertEquals(StatusUsuario.FOCO, usuario.getStatus());
 		verify(usuarioRepository, times(1)).buscaUsuarioPorEmail(usuario.getEmail());
 	}
-  
+
 	@Test
 	void deveMudarStatusParaPausaCurta_QuandoStatusEstiverDiferente() {
 
@@ -63,17 +63,17 @@ class UsuarioApplicationServiceTest {
 				() -> usuarioApplicationService.mudaStatusParaPausaCurta(usuario.getEmail(), idUsuario));
 		assertEquals(HttpStatus.UNAUTHORIZED, e.getStatusException());
 	}
-	
-	 @Test
-	 void naoDeveMudarStatusParaPausaCurta_QuandoStatusEstiverEmPausaCurta() {
-	        Usuario usuario = DataHelper.createUsuario();
-	        when(usuarioRepository.buscaUsuarioPorEmail(usuario.getEmail())).thenReturn(usuario);
-	        when(usuarioRepository.buscaUsuarioPorId(any())).thenReturn(usuario);
-	        usuarioApplicationService.mudaStatusParaPausaCurta(usuario.getEmail(), usuario.getIdUsuario());
-	        APIException exception = assertThrows(APIException.class, usuario::verificaSeJaEstaEmPausaCurta);
-	        assertEquals("Usuário já está em Pausa Curta.", exception.getMessage());
-	        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusException());
-	    }
+
+	@Test
+	void naoDeveMudarStatusParaPausaCurta_QuandoStatusEstiverEmPausaCurta() {
+		Usuario usuario = DataHelper.createUsuario();
+		when(usuarioRepository.buscaUsuarioPorEmail(usuario.getEmail())).thenReturn(usuario);
+		when(usuarioRepository.buscaUsuarioPorId(any())).thenReturn(usuario);
+		usuarioApplicationService.mudaStatusParaPausaCurta(usuario.getEmail(), usuario.getIdUsuario());
+		APIException exception = assertThrows(APIException.class, usuario::verificaSeJaEstaEmPausaCurta);
+		assertEquals("Usuário já está em Pausa Curta.", exception.getMessage());
+		assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusException());
+	}
 
 	@Test
 	void deveMudaStatusParaPausaLonga() {
@@ -92,7 +92,8 @@ class UsuarioApplicationServiceTest {
 
 		UUID idUsuarioInvalido = UUID.fromString("e8d30618-a4b9-4f1d-be80-6e27b2d1c387");
 		when(usuarioRepository.buscaUsuarioPorEmail(anyString())).thenReturn(usuario);
-		APIException ex = assertThrows(APIException.class, () -> usuarioApplicationService.mudaStatusParaPausaLonga(usuario.getEmail(), idUsuarioInvalido));
+		APIException ex = assertThrows(APIException.class,
+				() -> usuarioApplicationService.mudaStatusParaPausaLonga(usuario.getEmail(), idUsuarioInvalido));
 		assertEquals(HttpStatus.UNAUTHORIZED, ex.getStatusException());
 	}
 }
